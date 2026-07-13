@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Amalia 2.0 — Modern Python SDK, CLI & Boilerplate for Amália, Portugal's National LLM. Built for exceptional developer experience.">
+    <meta property="og:title" content="Amalia 2.0 | Modern SDK for Amália LLM">
+    <meta property="og:description" content="Next-generation tooling for Portugal's open Portuguese LLM. Agents, CLI, templates, and beautiful documentation.">
+    <title>Amalia 2.0 | Modern SDK & Boilerplate for Amália</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+        
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; }
+        
+        .section-header {
+            font-size: clamp(2.75rem, 6vw, 4.25rem);
+            line-height: 0.92;
+            letter-spacing: -0.045em;
+        }
+        
+        .project-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                       box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 
+                       0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .nav-active:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #34d399, transparent);
+        }
+        
+        .code-block {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        
+        .pt-flag {
+            background: linear-gradient(90deg, #006600, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200 antialiased">
+    <!-- NAV -->
+    <nav class="border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-6 md:px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center">
+                        <span class="font-display text-3xl font-bold text-zinc-950 tracking-tighter">A</span>
+                    </div>
+                    <div>
+                        <div class="font-display text-2xl font-semibold tracking-tighter">Amalia <span class="text-emerald-400">2.0</span></div>
+                        <div class="text-[10px] text-zinc-500 -mt-1 tracking-[1.5px] font-mono">PORTUGUESE LLM TOOLING</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-x-8 text-sm">
+                <a href="#vision" class="hover:text-white transition-colors">Vision</a>
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#gallery" class="hover:text-white transition-colors">Gallery</a>
+                <a href="#quickstart" class="hover:text-white transition-colors">Quickstart</a>
+                <a href="#ecosystem" class="hover:text-white transition-colors">Ecosystem</a>
+            </div>
+            
+            <div class="flex items-center gap-x-3">
+                <a href="https://github.com/fitzyracing1/amalia2.0" 
+                   target="_blank"
+                   class="px-5 py-2.5 bg-white text-zinc-950 rounded-3xl text-sm font-semibold flex items-center gap-x-2 hover:bg-zinc-100 transition-all">
+                    <i class="fa-brands fa-github"></i>
+                    <span class="hidden sm:inline">GitHub</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="max-w-screen-2xl mx-auto px-6 md:px-8 pt-16 pb-20">
+        <div class="max-w-4xl">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-zinc-900 border border-zinc-800 text-xs tracking-[2px] mb-6">
+                <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="font-mono text-emerald-400">V2.0 ALPHA</span> 
+                <span class="text-zinc-500">•</span> 
+                <span>NEXT-GEN PORTUGUESE LLM TOOLING</span>
+            </div>
+            
+            <h1 class="font-display text-[68px] md:text-[86px] leading-[0.88] tracking-[-4.2px] font-semibold">
+                Amalia 2.0
+            </h1>
+            
+            <p class="mt-4 max-w-2xl text-3xl md:text-4xl text-zinc-300 tracking-tight">
+                The modern developer platform for <span class="pt-flag">Amália</span>,<br>
+                Portugal’s open Portuguese LLM.
+            </p>
+            
+            <div class="mt-10 flex flex-wrap gap-4">
+                <a href="#quickstart" 
+                   class="group px-9 py-4 bg-white text-lg font-semibold text-zinc-950 rounded-3xl flex items-center gap-x-3 hover:bg-zinc-100 active:scale-[0.985] transition-all">
+                    Get Started 
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-0.5 transition"></i>
+                </a>
+                
+                <a href="https://github.com/fitzyracing1/amalia2.0" 
+                   target="_blank"
+                   class="px-9 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-3xl flex items-center gap-x-3 text-lg transition-all">
+                    <i class="fa-brands fa-github text-xl"></i> 
+                    <span>Star on GitHub</span>
+                </a>
+            </div>
+            
+            <div class="mt-8 flex items-center gap-x-6 text-sm text-zinc-500">
+                <div class="flex items-center gap-x-2">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>Built for pt-PT excellence</span>
+                </div>
+                <div class="hidden sm:block">•</div>
+                <div>Part of the Earthenware Computer ecosystem</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISION -->
+    <div id="vision" class="max-w-screen-2xl mx-auto px-6 md:px-8 py-16 border-t border-zinc-800">
+        <div class="grid lg:grid-cols-12 gap-x-16 gap-y-10">
+            <div class="lg:col-span-5">
+                <div class="sticky top-8">
+                    <div class="uppercase text-emerald-400 text-xs tracking-[2.5px] mb-3 font-mono">THE VISION</div>
+                    <h2 class="section-header font-semibold tracking-[-2.5px] leading-none">
+                        World-class tooling<br>
+                        <span class="text-zinc-400">for a national LLM.</span>
+                    </h2>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-7 text-lg text-zinc-300 space-y-6">
+                <p>
+                    Amália represents a major achievement in open, sovereign AI for the Portuguese language. 
+                    Amalia 2.0 exists to make that achievement accessible, delightful, and production-ready for every developer.
+                </p>
+                <p>
+                    We are building the missing layer: a beautiful, agent-native, template-driven SDK and CLI that feels like it was made for the modern AI builder — while staying deeply respectful of Portuguese language, culture, and the original AMALIA-LLM vision.
+                </p>
+                <p class="text-emerald-400 font-medium">
+                    This is not just an SDK. It is infrastructure for Portuguese-speaking builders and the next generation of European AI applications.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div id="features" class="max-w-screen-2xl mx-auto px-6 md:px-8 py-16 border-t border-zinc-800 bg-zinc-900">
+        <div class="max-w-3xl mb-12">
+            <div class="text-emerald-400 text-xs tracking-[2.5px] font-mono mb-2">WHAT’S NEW IN 2.0</div>
+            <h2 class="section-header font-semibold tracking-[-2px]">Built for Builders</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 project-card">
+                <div class="w-12 h-12 bg-emerald-400/10 text-emerald-400 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-terminal text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl tracking-tight mb-3">Modern Async Client</h3>
+                <p class="text-zinc-400 leading-relaxed">
+                    High-performance async/await support with streaming, retries, and structured outputs.
+                </p>
+            </div>
+            
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 project-card">
+                <div class="w-12 h-12 bg-emerald-400/10 text-emerald-400 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-magic text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl tracking-tight mb-3">One-Command Project Scaffolding</h3>
+                <p class="text-zinc-400 leading-relaxed">
+                    <code class="bg-zinc-900 px-1.5 py-0.5 rounded">amalia2 new my-app</code> instantly creates production-ready projects with best practices, examples, and documentation.
+                </p>
+            </div>
+            
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 project-card">
+                <div class="w-12 h-12 bg-emerald-400/10 text-emerald-400 rounded-2xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-robot text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl tracking-tight mb-3">Agent & Skill Framework</h3>
+                <p class="text-zinc-400 leading-relaxed">
+                    First-class multi-agent orchestration, tool calling, and reusable skills optimized for European Portuguese context and evaluation benchmarks.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div id="gallery" class="max-w-screen-2xl mx-auto px-6 md:px-8 py-16 border-t border-zinc-800">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-y-4 mb-10">
+            <div>
+                <div class="text-emerald-400 text-xs tracking-[2.5px] font-mono mb-2">VISUAL LANGUAGE</div>
+                <h2 class="section-header font-semibold tracking-[-2px]">See It In Action</h2>
+            </div>
+            <div class="text-sm text-zinc-400 max-w-xs">
+                High-quality renders, CLI screenshots, architecture diagrams, and example UIs generated with Grok Imagine.
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden project-card">
+                <div class="h-56 bg-zinc-900 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fa-solid fa-terminal text-5xl text-zinc-700 mb-4"></i>
+                        <p class="text-sm text-zinc-500">CLI Demo Screenshot</p>
+                    </div>
+                </div>
+                <div class="p-7">
+                    <div class="font-semibold text-xl tracking-tight">Beautiful Typer + Rich CLI</div>
+                    <p class="mt-2 text-sm text-zinc-400">Interactive chat, progress visualization, and syntax-highlighted responses.</p>
+                </div>
+            </div>
+            
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden project-card">
+                <div class="h-56 bg-zinc-900 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fa-solid fa-diagram-project text-5xl text-zinc-700 mb-4"></i>
+                        <p class="text-sm text-zinc-500">Architecture Diagram</p>
+                    </div>
+                </div>
+                <div class="p-7">
+                    <div class="font-semibold text-xl tracking-tight">Agent-Native Architecture</div>
+                    <p class="mt-2 text-sm text-zinc-400">Clean separation between client, agent runtime, skills, and orchestration layers.
+                </p>
+            </div>
+            
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden project-card">
+                <div class="h-56 bg-zinc-900 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fa-solid fa-mobile-screen text-5xl text-zinc-700 mb-4"></i>
+                        <p class="text-sm text-zinc-500">Mobile Integration</p>
+                    </div>
+                </div>
+                <div class="p-7">
+                    <div class="font-semibold text-xl tracking-tight">Pie Face OS Companion</div>
+                    <p class="mt-2 text-sm text-zinc-400">Example mobile agent interface running on-device with Amália.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-xs text-zinc-500">
+            More visuals coming soon. Contributions of CLI recordings, architecture diagrams, and UI mocks are very welcome.
+        </div>
+    </div>
+
+    <!-- QUICKSTART -->
+    <div id="quickstart" class="max-w-screen-2xl mx-auto px-6 md:px-8 py-16 border-t border-zinc-800">
+        <div class="max-w-3xl">
+            <div class="text-emerald-400 text-xs tracking-[2.5px] font-mono mb-3">GET STARTED IN SECONDS</div>
+            <h2 class="section-header font-semibold tracking-[-2px] mb-8">Quickstart</h2>
+            
+            <div class="space-y-8">
+                <div>
+                    <div class="font-mono text-sm text-emerald-400 mb-2">1. INSTALL</div>
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
+                        pip install amalia2<br>
+                        # or for development<br>
+                        pip install -e ".[cli,agents]"
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="font-mono text-sm text-emerald-400 mb-2">2. CREATE A NEW PROJECT</div>
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
+                        amalia2 new my-portuguese-app --template agent-chatbot
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="font-mono text-sm text-emerald-400 mb-2">3. START CHATTING</div>
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
+                        amalia2 chat --model amalia-9b-instruct
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ECOSYSTEM -->
+    <div id="ecosystem" class="max-w-screen-2xl mx-auto px-6 md:px-8 py-16 border-t border-zinc-800 bg-zinc-900">
+        <div class="max-w-3xl">
+            <div class="text-emerald-400 text-xs tracking-[2.5px] font-mono mb-3">CONNECTED TO SOMETHING BIGGER</div>
+            <h2 class="section-header font-semibold tracking-[-2px] mb-8">Ecosystem Integrations</h2>
+            
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-3xl">
+                    <div class="font-semibold flex items-center gap-x-2"><i class="fa-solid fa-tags text-emerald-400"></i> 3XB AI</div>
+                    <div class="text-xs text-zinc-500 mt-1">Entity intelligence & weighted modeling on Portuguese text</div>
+                </div>
+                <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-3xl">
+                    <div class="font-semibold flex items-center gap-x-2"><i class="fa-solid fa-mobile text-emerald-400"></i> Pie Face Mobile OS</div>
+                    <div class="text-xs text-zinc-500 mt-1">On-device agents and lightweight inference</div>
+                </div>
+                <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-3xl">
+                    <div class="font-semibold flex items-center gap-x-2"><i class="fa-solid fa-atom text-emerald-400"></i> Organic Spin Processor</div>
+                    <div class="text-xs text-zinc-500 mt-1">Future quantum-enhanced Portuguese understanding</div>
+                </div>
+                <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-3xl">
+                    <div class="font-semibold flex items-center gap-x-2"><i class="fa-solid fa-globe text-emerald-400"></i> Community Plan Legacy</div>
+                    <div class="text-xs text-zinc-500 mt-1">Real-world applications with historical Portuguese fintech roots</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div class="border-t border-zinc-800 py-16">
+        <div class="max-w-screen-2xl mx-auto px-6 md:px-8 text-center">
+            <h3 class="text-5xl tracking-[-2px] font-semibold">Ready to build with Amália?</h3>
+            <p class="mt-4 max-w-md mx-auto text-zinc-400">
+                Join the effort to create world-class, Portuguese-first AI tooling.
+            </p>
+            
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <a href="https://github.com/fitzyracing1/amalia2.0" target="_blank"
+                   class="px-10 py-4 bg-white text-zinc-950 rounded-3xl font-semibold flex items-center justify-center gap-x-3 hover:bg-zinc-100 transition">
+                    Star & Contribute on GitHub
+                </a>
+                <a href="https://x.com/fitzyracing1" target="_blank"
+                   class="px-10 py-4 border border-zinc-700 rounded-3xl font-medium flex items-center justify-center gap-x-3 hover:bg-zinc-900 transition">
+                    Follow progress on X
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-zinc-800 py-10 text-center text-xs text-zinc-500">
+        <div class="max-w-screen-2xl mx-auto px-6">
+            Amalia 2.0 • Built with respect for the AMALIA-LLM community • fitzyracing1 • 2026<br>
+            <span class="text-emerald-400/70">Part of the Earthenware Computer ecosystem</span>
+        </div>
+    </footer>
+</body>
+</html>

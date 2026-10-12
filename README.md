@@ -133,3 +133,7 @@ Special thanks to the Grok & xAI ecosystem for accelerating ambitious builder wo
 **Amalia 2.0** • Modern tooling for Portugal's LLM • fitzyracing1 • 2026
 
 *Part of the Earthenware Computer ecosystem — Tagging for everyone and everything.*
+## Documentation
+
+- In-repo docs: [docs/](docs/index.md)
+- Wiki: [https://github.com/fitzyracing1/amalia2.0/wiki](https://github.com/fitzyracing1/amalia2.0/wiki)

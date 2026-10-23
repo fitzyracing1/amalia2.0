@@ -3,6 +3,7 @@ Basic chat example with Amalia 2.0
 """
 
 import asyncio
+
 from amalia2 import AmaliaClient
 
 

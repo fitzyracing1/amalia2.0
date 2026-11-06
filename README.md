@@ -4,7 +4,7 @@
 
 **Status:** In Active Development (v2.0 Alpha)  
 **License:** MIT  
-**Website:** https://fitzyracing1.github.io/Amalia2.0  
+**Website:** https://fitzyracing1.github.io/amalia2.0  
 **PyPI (planned):** `pip install amalia2`  
 **Original SDK:** [alfmatos/amalia](https://github.com/alfmatos/amalia)
 
@@ -42,38 +42,37 @@ This project draws inspiration from the pioneering work of the AMALIA-LLM organi
 ## Quick Start
 
 ```bash
-# Install (once published)
-pip install amalia2
+# From source (not yet on PyPI)
+git clone https://github.com/fitzyracing1/amalia2.0
+cd amalia2.0
+pip install -e ".[dev]"
 
-# Or from source
-git clone https://github.com/fitzyracing1/Amalia2.0
-cd Amalia2.0
-pip install -e ".[cli,chat]"
+# Credentials — env vars, or a creds.txt in cwd / ~/.amalia/
+export AMALIA_API_KEY=sk-usr-...
+export AMALIA_AGENT_ID=<your-agent-id>
+export AMALIA_CHANNEL_ID=<your-channel-id>
+# optional: export AMALIA_BASE_URL=https://api.iaedu.pt/agent-chat
 
-# Create a new project from template
+# Interactive streaming chat
+amalia2 chat
+
+# Scaffolding is not implemented yet (phase 03)
 amalia2 new my-portuguese-app --template rag-chatbot
-
-# Interactive chat
-amalia2 chat --model amalia-9b
-
-# Run an agent example
-amalia2 run examples/agent_researcher.py
 ```
 
-See the full [Getting Started guide on the website](https://fitzyracing1.github.io/Amalia2.0).
+See [docs/getting-started.md](docs/getting-started.md) or the [project website](https://fitzyracing1.github.io/amalia2.0).
 
 ---
 
 ## Project Structure
 
 ```
-Amalia2.0/
+amalia2.0/
 ├── src/amalia2/           # Core package
-│   ├── client/            # Async + sync clients
-│   ├── cli/               # Typer CLI
-│   ├── agents/            # Agent framework & tools
-│   ├── skills/            # Reusable skills (pt-PT optimized)
-│   └── templates/         # Project scaffolding
+│   ├── client.py          # Async IAEdu streaming client
+│   ├── config.py          # AMALIA_* env + creds.txt loading
+│   ├── errors.py          # Typed API errors
+│   └── cli.py             # Typer CLI (`chat`, `version`, `new`)
 ├── examples/              # Ready-to-run examples
 ├── templates/             # Cookiecutter / copier templates for new projects
 ├── docs/                  # Beautiful GitHub Pages website
@@ -116,7 +115,7 @@ We believe national LLMs like Amália deserve world-class tooling.
 
 We welcome contributions from Portuguese speakers, LLM enthusiasts, agent builders, and anyone passionate about sovereign AI tooling.
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md). Visual contributions (diagrams, UI mocks for the chat client, example screenshots) are especially valued.
+Please read [docs/contributing.md](docs/contributing.md). Visual contributions (diagrams, UI mocks for the chat client, example screenshots) are especially valued.
 
 ---
 

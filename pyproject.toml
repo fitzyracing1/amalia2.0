@@ -48,10 +48,10 @@ dev = [
 amalia2 = "amalia2.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/fitzyracing1/Amalia2.0"
-Documentation = "https://fitzyracing1.github.io/Amalia2.0"
-Repository = "https://github.com/fitzyracing1/Amalia2.0"
-Issues = "https://github.com/fitzyracing1/Amalia2.0/issues"
+Homepage = "https://github.com/fitzyracing1/amalia2.0"
+Documentation = "https://fitzyracing1.github.io/amalia2.0"
+Repository = "https://github.com/fitzyracing1/amalia2.0"
+Issues = "https://github.com/fitzyracing1/amalia2.0/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/amalia2"]
@@ -67,3 +67,4 @@ strict = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

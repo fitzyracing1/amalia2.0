@@ -52,6 +52,7 @@ Homepage = "https://github.com/fitzyracing1/Amalia2.0"
 Documentation = "https://fitzyracing1.github.io/Amalia2.0"
 Repository = "https://github.com/fitzyracing1/Amalia2.0"
 Issues = "https://github.com/fitzyracing1/Amalia2.0/issues"
+Funding = "https://github.com/sponsors/fitzyracing1"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/amalia2"]

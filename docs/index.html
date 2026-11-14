@@ -271,23 +271,25 @@
                 <div>
                     <div class="font-mono text-sm text-emerald-400 mb-2">1. INSTALL</div>
                     <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
-                        pip install amalia2<br>
-                        # or for development<br>
-                        pip install -e ".[cli,agents]"
+                        git clone https://github.com/fitzyracing1/amalia2.0<br>
+                        cd amalia2.0<br>
+                        pip install -e ".[dev]"
                     </div>
                 </div>
                 
                 <div>
-                    <div class="font-mono text-sm text-emerald-400 mb-2">2. CREATE A NEW PROJECT</div>
+                    <div class="font-mono text-sm text-emerald-400 mb-2">2. CONFIGURE CREDENTIALS</div>
                     <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
-                        amalia2 new my-portuguese-app --template agent-chatbot
+                        export AMALIA_API_KEY=sk-usr-...<br>
+                        export AMALIA_AGENT_ID=&lt;your-agent-id&gt;<br>
+                        export AMALIA_CHANNEL_ID=&lt;your-channel-id&gt;
                     </div>
                 </div>
                 
                 <div>
                     <div class="font-mono text-sm text-emerald-400 mb-2">3. START CHATTING</div>
                     <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 code-block text-sm">
-                        amalia2 chat --model amalia-9b-instruct
+                        amalia2 chat
                     </div>
                 </div>
             </div>

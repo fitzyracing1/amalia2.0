@@ -41,3 +41,4 @@ Thumbs.db
 .env
 .env.local
 amalia2.egg-info/
+creds.txt

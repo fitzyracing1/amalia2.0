@@ -2,29 +2,37 @@
 
 from __future__ import annotations
 
-import json
 from collections.abc import Callable
 
 import httpx
 import pytest
 
-from amalia2 import AmaliaClient
-from amalia2.client import AmaliaConfig
-
-OK_BODY = {
-    "id": "chatcmpl-1",
-    "object": "chat.completion",
-    "model": "amalia-9b",
-    "choices": [
-        {
-            "index": 0,
-            "message": {"role": "assistant", "content": "Olá! Em que posso ajudar?"},
-            "finish_reason": "stop",
-        }
-    ],
-}
+from amalia2 import AmaliaAuthError, AmaliaClient, AmaliaError, AmaliaHTTPError, StreamEvent
+from amalia2.client import USER_AGENT
+from amalia2.config import DEFAULT_BASE_URL, AmaliaConfig
 
 Handler = Callable[[httpx.Request], httpx.Response]
+
+SAMPLE = AmaliaConfig(
+    api_key="test-key",
+    agent_id="agent-1",
+    channel_id="channel-1",
+)
+
+NDJSON_OK = (
+    b'{"type": "start", "content": "Processing", "run_id": "run-1"}\n'
+    b'{"type": "token", "content": "Ol"}\n'
+    b'{"type": "token", "content": "\xc3\xa1"}\n'
+    b'{"type": "message", "content": {"content": "Ol\xc3\xa1", "model_name": "amalia",'
+    b' "finish_reason": "stop"}}\n'
+    b'{"type": "done", "content": "run-1", "messageId": "m1"}\n'
+)
+
+NDJSON_TOKENS_ONLY = (
+    b'{"type": "token", "content": "Bom "}\n'
+    b'{"type": "token", "content": "dia"}\n'
+    b'{"type": "done", "content": "run-2"}\n'
+)
 
 
 def make_client(
@@ -35,7 +43,7 @@ def make_client(
     requests: list[httpx.Request] = []
 
     def default_handler(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, json=OK_BODY)
+        return httpx.Response(200, content=NDJSON_OK)
 
     respond = handler or default_handler
 
@@ -44,78 +52,121 @@ def make_client(
         return respond(request)
 
     transport = httpx.MockTransport(recording_handler)
-    return AmaliaClient(config, transport=transport), requests
+    return AmaliaClient(config or SAMPLE, transport=transport), requests
 
 
-async def test_chat_request_shape() -> None:
+def _body_text(request: httpx.Request) -> str:
+    return request.content.decode("utf-8", errors="replace")
+
+
+async def test_stream_parses_ndjson_events() -> None:
     client, requests = make_client()
-    result = await client.chat(
-        messages=[{"role": "user", "content": "Olá"}],
-        temperature=0.2,
-    )
+    events = [ev async for ev in client.stream("Olá", thread_id="thread-1")]
     await client.close()
 
-    assert result == OK_BODY
+    assert [ev.type for ev in events] == ["start", "token", "token", "message", "done"]
+    assert events[1] == StreamEvent(
+        type="token",
+        content="Ol",
+        run_id="",
+        raw={"type": "token", "content": "Ol"},
+    )
+    assert events[2].content == "á"
+    message = events[3].content
+    assert isinstance(message, dict)
+    assert message["content"] == "Olá"
+    assert events[0].run_id == "run-1"
+
     (request,) = requests
     assert request.method == "POST"
-    assert str(request.url) == "https://api.amaliallm.pt/v1/chat/completions"
-    assert request.headers["content-type"] == "application/json"
-    assert request.headers["user-agent"].startswith("amalia2/")
-    payload = json.loads(request.content)
-    assert payload == {
-        "model": "amalia-9b",
-        "messages": [{"role": "user", "content": "Olá"}],
-        "stream": False,
-        "temperature": 0.2,
-    }
-
-
-async def test_chat_custom_model_and_stream_flag() -> None:
-    client, requests = make_client()
-    await client.chat(
-        messages=[{"role": "user", "content": "hi"}],
-        model="amalia-9b-instruct",
-        stream=True,
+    assert str(request.url) == (
+        f"{DEFAULT_BASE_URL}//api/v1/agent/{SAMPLE.agent_id}/stream"
     )
+    assert request.headers["x-api-key"] == "test-key"
+    assert request.headers["user-agent"] == USER_AGENT
+    assert request.headers["content-type"].startswith("multipart/form-data")
+    body = _body_text(request)
+    assert "channel_id" in body
+    assert SAMPLE.channel_id in body
+    assert "thread-1" in body
+    assert "Olá" in body
+
+
+async def test_complete_prefers_message_event() -> None:
+    client, _ = make_client()
+    reply = await client.complete("Olá", thread_id="t")
     await client.close()
-    payload = json.loads(requests[0].content)
-    assert payload["model"] == "amalia-9b-instruct"
-    assert payload["stream"] is True
+    assert reply == "Olá"
 
 
-async def test_auth_header_sent_when_api_key_set() -> None:
-    config = AmaliaConfig(api_key="secret-key")
-    client, requests = make_client(config)
-    await client.chat(messages=[{"role": "user", "content": "hi"}])
+async def test_complete_falls_back_to_concatenated_tokens() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=NDJSON_TOKENS_ONLY)
+
+    client, _ = make_client(handler=handler)
+    reply = await client.complete("hi", thread_id="t")
     await client.close()
-    assert requests[0].headers["authorization"] == "Bearer secret-key"
+    assert reply == "Bom dia"
 
 
-async def test_no_auth_header_without_api_key() -> None:
-    client, requests = make_client()
-    await client.chat(messages=[{"role": "user", "content": "hi"}])
+async def test_skips_malformed_ndjson_lines() -> None:
+    payload = (
+        b"not-json\n"
+        b'{"type": "token", "content": "ok"}\n'
+        b"\n"
+        b'{"type": "done", "content": "x"}\n'
+    )
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=payload)
+
+    client, _ = make_client(handler=handler)
+    events = [ev async for ev in client.stream("x", thread_id="t")]
     await client.close()
-    assert "authorization" not in requests[0].headers
+    assert [ev.type for ev in events] == ["token", "done"]
+    assert events[0].content == "ok"
 
 
-async def test_http_error_raises_status_error() -> None:
+async def test_auth_failure_raises_typed_error() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(401, json={"error": "invalid api key"})
 
     client, _ = make_client(handler=handler)
-    with pytest.raises(httpx.HTTPStatusError) as excinfo:
-        await client.chat(messages=[{"role": "user", "content": "hi"}])
+    with pytest.raises(AmaliaAuthError, match="AMALIA_API_KEY"):
+        async for _ in client.stream("hi", thread_id="t"):
+            pass
     await client.close()
-    assert excinfo.value.response.status_code == 401
 
 
-async def test_unreachable_endpoint_raises_transport_error() -> None:
+async def test_forbidden_raises_auth_error() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(403, text="nope")
+
+    client, _ = make_client(handler=handler)
+    with pytest.raises(AmaliaAuthError, match="403"):
+        await client.complete("hi", thread_id="t")
+    await client.close()
+
+
+async def test_http_error_exposes_status_and_body() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(500, text="upstream exploded")
+
+    client, _ = make_client(handler=handler)
+    with pytest.raises(AmaliaHTTPError) as excinfo:
+        await client.complete("hi", thread_id="t")
+    await client.close()
+    assert excinfo.value.status_code == 500
+    assert "upstream exploded" in excinfo.value.body
+
+
+async def test_unreachable_endpoint_raises_amalia_error() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("connection refused", request=request)
 
     client, _ = make_client(handler=handler)
-    with pytest.raises(httpx.ConnectError):
-        await client.chat(messages=[{"role": "user", "content": "hi"}])
+    with pytest.raises(AmaliaError, match="Network error"):
+        await client.complete("hi", thread_id="t")
     await client.close()
 
 
@@ -128,15 +179,42 @@ async def test_context_manager_closes_client() -> None:
 
 
 async def test_custom_base_url_is_used() -> None:
-    config = AmaliaConfig(base_url="http://localhost:8000/v1")
+    config = AmaliaConfig(
+        api_key="k",
+        agent_id="ag",
+        channel_id="ch",
+        base_url="http://localhost:8000/agent-chat/",
+    )
     client, requests = make_client(config)
-    await client.chat(messages=[{"role": "user", "content": "hi"}])
+    await client.complete("hi", thread_id="t")
     await client.close()
-    assert str(requests[0].url) == "http://localhost:8000/v1/chat/completions"
+    assert str(requests[0].url) == "http://localhost:8000/agent-chat//api/v1/agent/ag/stream"
 
 
-def test_config_defaults() -> None:
-    config = AmaliaConfig()
-    assert config.base_url == "https://api.amaliallm.pt/v1"
-    assert config.api_key is None
-    assert config.timeout == 60.0
+async def test_optional_fields_are_sent() -> None:
+    client, requests = make_client()
+    await client.complete(
+        "hi",
+        thread_id="t",
+        user_id="user-9",
+        user_info={"name": "Ana"},
+        user_context={"locale": "pt-PT"},
+    )
+    await client.close()
+    body = _body_text(requests[0])
+    assert "user-9" in body
+    assert "Ana" in body
+    assert "pt-PT" in body
+
+
+def test_config_stream_url_and_defaults() -> None:
+    config = AmaliaConfig(api_key="k", agent_id="ag", channel_id="ch")
+    assert config.base_url == DEFAULT_BASE_URL
+    assert config.timeout == 120.0
+    assert config.stream_url() == f"{DEFAULT_BASE_URL}//api/v1/agent/ag/stream"
+
+
+def test_new_thread_id_is_url_safe() -> None:
+    tid = AmaliaClient.new_thread_id()
+    assert len(tid) >= 8
+    assert "/" not in tid
